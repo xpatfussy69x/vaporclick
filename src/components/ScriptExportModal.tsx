@@ -65,7 +65,7 @@ while ($true) {
         <div className="flex items-center justify-between px-3 py-1.5 bg-gradient-to-r from-[#01cdfe] via-[#b967ff] to-[#ff71ce] text-black font-extrabold text-xs tracking-wider">
           <div className="flex items-center gap-2">
             <Terminal className="w-4 h-4" />
-            <span>EXPORT OP AUTO CLICKER FOR DESKTOP & WEB</span>
+            <span>EXPORT VAPOR CLICKER FOR DESKTOP & WEB</span>
           </div>
           <button
             onClick={onClose}
@@ -78,7 +78,7 @@ while ($true) {
         {/* Content */}
         <div className="p-4 space-y-4 font-mono text-xs">
           <div className="text-slate-300 text-xs">
-            Want your OP Clicker to work globally across games, desktop windows, or other browser tabs?
+            Want Vapor Clicker to work globally across games, desktop windows, or other browser tabs?
             Export your exact current interval ({getTotalIntervalMs(config)}ms), button ({config.mouseButton}), and hotkey ({config.hotkey})!
           </div>
 

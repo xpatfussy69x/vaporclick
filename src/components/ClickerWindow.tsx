@@ -57,7 +57,7 @@ export const ClickerWindow: React.FC<ClickerWindowProps> = ({
       <div className="flex items-center justify-between px-3 py-1.5 bg-gradient-to-r from-[#ff71ce] via-[#b967ff] to-[#01cdfe] text-black font-extrabold text-xs tracking-wider">
         <div className="flex items-center gap-2">
           <span className="font-spacemono">⚡</span>
-          <span>OP AUTO CLICKER v3.2 [VAPORWAVE EDITION]</span>
+          <span>VAPOR CLICKER v3.2 [SYSTEM UTILITY]</span>
         </div>
         <div className="flex items-center gap-1 font-mono text-[10px]">
           <span className="px-1.5 py-0.5 bg-black/20 text-black font-bold">

@@ -125,7 +125,7 @@ export const TestingSandbox: React.FC<TestingSandboxProps> = ({
 
   // Tier calculation based on CPS
   const getCPSTier = (cps: number) => {
-    if (cps >= 200) return { title: 'OP GODSPEED', color: '#ff71ce' };
+    if (cps >= 200) return { title: 'LIGHTSPEED MAX', color: '#ff71ce' };
     if (cps >= 60) return { title: 'CYBER OVERCLOCK', color: '#01cdfe' };
     if (cps >= 25) return { title: 'TURBO FAST', color: '#05ffa1' };
     if (cps >= 10) return { title: 'PRO GAMER', color: '#fffb96' };
@@ -259,7 +259,7 @@ export const TestingSandbox: React.FC<TestingSandboxProps> = ({
               <span>25 CPS</span>
               <span>50 CPS</span>
               <span>75 CPS</span>
-              <span>100+ CPS (OP)</span>
+              <span>100+ CPS (MAX)</span>
             </div>
           </div>
 
@@ -377,7 +377,7 @@ export const TestingSandbox: React.FC<TestingSandboxProps> = ({
       {activeTab === 'arena' && (
         <div className="p-4 space-y-3 font-mono text-xs text-slate-200">
           <div className="text-[11px] text-slate-400">
-            Click "Lock (X,Y)" to instantly transfer target screen coordinates into OP Auto Clicker!
+            Click "Lock (X,Y)" to instantly transfer target screen coordinates into Vapor Clicker!
           </div>
 
           <div className="grid grid-cols-2 gap-3">

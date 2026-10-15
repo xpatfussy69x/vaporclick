@@ -156,10 +156,10 @@ export default function App() {
         <div className="mb-6 flex items-center justify-between flex-wrap gap-3 pb-3 border-b border-purple-900/50">
           <div>
             <h1 className="text-xl md:text-2xl font-extrabold tracking-wider font-mono bg-gradient-to-r from-[#ff71ce] via-[#fffb96] to-[#01cdfe] bg-clip-text text-transparent">
-              V A P O R C L I C K // オ ー ト ク リ ッ カ ー
+              V A P O R  C L I C K E R // オ ー ト ク リ ッ カ ー
             </h1>
             <p className="text-xs text-slate-400 font-mono mt-0.5">
-              High-precision OP Auto Clicker with milliseconds intervals, coordinate targeting & macro sequencing
+              High-precision Vaporwave auto clicker with milliseconds intervals, coordinate targeting & macro sequencing
             </p>
           </div>
 
@@ -186,7 +186,7 @@ export default function App() {
         {/* Dynamic Multi-Panel Workspace */}
         {activeView === 'clicker' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-            {/* Left Column: The Full-Featured OP Clicker Control Panel */}
+            {/* Left Column: The Vapor Clicker Control Panel */}
             <div className="space-y-4">
               <ClickerWindow
                 config={config}
@@ -218,7 +218,7 @@ export default function App() {
               <div className="bg-[#130726]/90 border border-purple-900/60 p-3.5 text-slate-300 font-mono text-xs space-y-1.5">
                 <div className="text-[#01cdfe] font-bold flex items-center gap-1.5">
                   <HelpCircle className="w-3.5 h-3.5" />
-                  <span>OP AUTO CLICKER PRO-TIPS</span>
+                  <span>VAPOR CLICKER PRO-TIPS</span>
                 </div>
                 <div className="text-[11px] text-slate-400 space-y-1">
                   <p>
@@ -305,7 +305,7 @@ export default function App() {
 
       {/* Footer */}
       <footer className="relative z-10 py-4 px-6 border-t border-purple-900/60 bg-[#0b0314]/90 text-center text-[11px] font-mono text-slate-500">
-        VAPORCLICK 95 // THE OP AUTO CLICKER FOR HIGH PERFORMANCE WEBSITES & GAMES // PRESS {config.hotkey} TO TOGGLE
+        VAPOR CLICKER // HIGH PERFORMANCE RETRO AUTO CLICKER // PRESS {config.hotkey} TO TOGGLE
       </footer>
     </div>
   );

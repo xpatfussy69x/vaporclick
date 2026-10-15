@@ -1,5 +1,5 @@
 /**
- * Script generators for OP Auto Clicker
+ * Script generators for Vapor Clicker
  * Enables users to run their exact configuration natively outside the web browser.
  */
 
@@ -38,7 +38,7 @@ export function generateAHKScript(config: ClickerConfig): string {
     : config.hotkey === 'Space' ? 'Space' : config.hotkey.toLowerCase();
 
   return `; ==========================================
-; VAPORCLICK - OP AUTO CLICKER (AHK v1.1 / v2 Compatible)
+; VAPOR CLICKER (AHK v1.1 / v2 Compatible)
 ; Generated for: ${interval}ms interval, ${btn} button, ${config.clickType} click
 ; ==========================================
 #NoEnv
@@ -87,7 +87,7 @@ export function generatePythonScript(config: ClickerConfig): string {
   const hotkey = config.hotkey.toLowerCase();
 
   return `# ==========================================
-# VAPORCLICK - OP AUTO CLICKER (Python + PyAutoGUI + Keyboard)
+# VAPOR CLICKER (Python + PyAutoGUI + Keyboard)
 # Requirements: pip install pyautogui keyboard
 # ==========================================
 import pyautogui

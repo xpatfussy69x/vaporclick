@@ -30,10 +30,10 @@ export const TopNavigation: React.FC<TopNavigationProps> = ({
       {/* Zone 1: Single text element wordmark */}
       <div className="flex items-center gap-2 shrink-0">
         <span className="text-xl font-extrabold tracking-widest bg-gradient-to-r from-[#ff71ce] via-[#b967ff] to-[#01cdfe] bg-clip-text text-transparent whitespace-nowrap font-mono">
-          VAPORCLICK 95
+          VAPOR CLICKER
         </span>
         <span className="hidden sm:inline text-[10px] px-1.5 py-0.5 bg-[#ff71ce]/20 text-[#ff71ce] font-mono border border-[#ff71ce]/40 font-bold">
-          OP AUTO CLICKER
+          AUTO CLICKER
         </span>
       </div>
 
