@@ -2,7 +2,7 @@
 
 An authentic 90s Vaporwave-styled auto-clicking utility and performance benchmark application.
 
-![Vapor Clicker](src/assets/images/vaporwave_desktop_bg_1792024953241.jpg)
+![Vapor Clicker Screenshot](src/assets/images/vapor_clicker_screenshot_1792026866385.jpg)
 
 ## Features
 

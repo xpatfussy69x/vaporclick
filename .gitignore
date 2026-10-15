@@ -6,3 +6,8 @@ coverage/
 *.log
 .env*
 !.env.example
+*.zip
+*.exe
+build_win/
+dist-electron/
+electron_win.zip
