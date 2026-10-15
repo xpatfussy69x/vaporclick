@@ -1,5 +1,6 @@
 const { app, BrowserWindow, globalShortcut } = require('electron');
 const path = require('path');
+const fs = require('fs');
 
 function createWindow() {
   const win = new BrowserWindow({
@@ -7,20 +8,29 @@ function createWindow() {
     height: 840,
     minWidth: 960,
     minHeight: 640,
-    title: 'Vapor Clicker',
+    title: 'Vapor Clicker - Android Edition',
     backgroundColor: '#0d041a',
     autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
+      webSecurity: false,
     },
   });
 
-  // Load production build or dev server
   const indexPath = path.join(__dirname, '..', 'dist', 'index.html');
-  win.loadFile(indexPath).catch(() => {
-    win.loadURL('http://localhost:3000');
-  });
+  if (fs.existsSync(indexPath)) {
+    win.loadFile(indexPath);
+  } else {
+    win.loadURL('http://localhost:3000').catch((err) => {
+      console.error('Failed to load dev URL:', err);
+    });
+  }
+
+  // Open devtools in development if needed
+  if (process.env.DEBUG === 'true') {
+    win.webContents.openDevTools();
+  }
 }
 
 app.whenReady().then(createWindow);

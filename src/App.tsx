@@ -3,10 +3,11 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ClickerConfig } from './types/clicker';
 import { useAutoClicker } from './hooks/useAutoClicker';
-import { SoundEffectType } from './utils/audio';
+import { SoundEffectType, triggerHaptic } from './utils/audio';
+
 import { ClickerWindow } from './components/ClickerWindow';
 import { TestingSandbox } from './components/TestingSandbox';
 import { MacroManager } from './components/MacroManager';
@@ -14,8 +15,10 @@ import { ScriptExportModal } from './components/ScriptExportModal';
 import { HotkeyModal } from './components/HotkeyModal';
 import { TopNavigation } from './components/TopNavigation';
 import { ClickRipplesLayer } from './components/ClickRipplesLayer';
+import { PCWindowHeader } from './components/pc/PCWindowHeader';
+import { PCGuideModal } from './components/pc/PCGuideModal';
 
-const STORAGE_KEY = 'vaporclick_config_v1';
+const STORAGE_KEY = 'vaporclick_pc_config_v1';
 
 const DEFAULT_CONFIG: ClickerConfig = {
   hours: 0,
@@ -40,7 +43,7 @@ export default function App() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) return { ...DEFAULT_CONFIG, ...JSON.parse(saved) };
     } catch {
-      // ignore
+      // fallback to defaults on parse failure
     }
     return DEFAULT_CONFIG;
   });
@@ -48,24 +51,29 @@ export default function App() {
   const [soundType, setSoundType] = useState<SoundEffectType>('mechanical');
   const [soundVolume, setSoundVolume] = useState<number>(0.5);
   const [crtEnabled, setCrtEnabled] = useState<boolean>(true);
-  const [activeView, setActiveView] = useState<'clicker' | 'sandbox' | 'macro' | 'export'>('clicker');
-  const [isHotkeyModalOpen, setIsHotkeyModalOpen] = useState(false);
-  const [isExportModalOpen, setIsExportModalOpen] = useState(false);
 
-  // Save config changes to localStorage
-  const handleUpdateConfig = (updates: Partial<ClickerConfig>) => {
+  // Active workspace view
+  const [activeView, setActiveView] = useState<'clicker' | 'sandbox' | 'macro' | 'export'>('clicker');
+
+  // Modals state
+  const [isHotkeyModalOpen, setIsHotkeyModalOpen] = useState<boolean>(false);
+  const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false);
+  const [isPCGuideOpen, setIsPCGuideOpen] = useState<boolean>(false);
+
+  // Persist configuration updates defensively
+  const handleUpdateConfig = useCallback((updates: Partial<ClickerConfig>) => {
     setConfig((prev) => {
       const next = { ...prev, ...updates };
       try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
       } catch {
-        // ignore
+        // ignore storage errors
       }
       return next;
     });
-  };
+  }, []);
 
-  // Initialize auto clicker engine hook
+  // Initialize auto clicker engine
   const {
     isRunning,
     isPickingCoordinate,
@@ -91,17 +99,45 @@ export default function App() {
     onConfigChange: handleUpdateConfig,
   });
 
-  const handleSetCoordinates = (x: number, y: number) => {
+  // Global hotkey listener for PC desktop (e.g. F6)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Prevent triggering if user is currently typing in an input element
+      const targetTag = (e.target as HTMLElement)?.tagName?.toLowerCase();
+      if (targetTag === 'input' || targetTag === 'textarea' || targetTag === 'select') {
+        return;
+      }
+
+      if (e.key.toUpperCase() === config.hotkey.toUpperCase()) {
+        e.preventDefault();
+        triggerHaptic(15);
+        toggleClicking();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [config.hotkey, toggleClicking]);
+
+  const handleSetCoordinates = useCallback((x: number, y: number) => {
     handleUpdateConfig({
       targetX: x,
       targetY: y,
       cursorPositionType: 'picked',
     });
-  };
+  }, [handleUpdateConfig]);
 
   return (
-    <div className="min-h-screen bg-[#0d041a] text-slate-100 flex flex-col relative overflow-x-hidden">
-      {/* Background Wallpaper with Vaporwave Styling */}
+    <div className="min-h-screen bg-[#0d041a] text-slate-100 flex flex-col relative overflow-x-hidden font-sans">
+      {/* PC Windows Titlebar */}
+      <PCWindowHeader
+        hotkey={config.hotkey}
+        isRunning={isRunning || isMacroRunning}
+        activeCPS={stats.activeCPS}
+        onOpenHelpModal={() => setIsPCGuideOpen(true)}
+      />
+
+      {/* Retro Vaporwave Wallpaper Layer */}
       <div
         className="fixed inset-0 pointer-events-none opacity-45 bg-cover bg-center z-0 transition-opacity"
         style={{
@@ -115,7 +151,7 @@ export default function App() {
         <div className="fixed inset-0 pointer-events-none z-30 crt-overlay opacity-75" />
       )}
 
-      {/* Interactive Click Ripples, Crosshairs & Path Layer */}
+      {/* Interactive Click Ripples, Crosshairs & Macro Path Layer */}
       <ClickRipplesLayer
         ripples={ripples}
         cursorPositionType={config.cursorPositionType}
@@ -128,7 +164,7 @@ export default function App() {
         macroStepIndex={macroStepIndex}
       />
 
-      {/* Top Bar Navigation (Strict 3-zone contract) */}
+      {/* Top Bar Navigation */}
       <TopNavigation
         activeView={activeView}
         onSelectView={(view) => {
@@ -147,6 +183,7 @@ export default function App() {
         onToggleMute={() =>
           setSoundType(soundType === 'muted' ? 'mechanical' : 'muted')
         }
+        onOpenPCGuide={() => setIsPCGuideOpen(true)}
       />
 
       {/* Main App Content Viewport */}
@@ -158,7 +195,7 @@ export default function App() {
               V A P O R  C L I C K E R // オ ー ト ク リ ッ カ ー
             </h1>
             <p className="text-xs text-slate-400 font-mono mt-0.5">
-              High-precision Vaporwave auto clicker with milliseconds intervals, coordinate targeting & macro sequencing
+              High-precision desktop auto clicker for Windows, macOS &amp; Linux with millisecond intervals, coordinate targeting &amp; macro sequencing
             </p>
           </div>
 
@@ -175,6 +212,7 @@ export default function App() {
             <button
               onClick={() => setIsHotkeyModalOpen(true)}
               className="bg-[#240d42] hover:bg-[#32135c] border border-[#ff71ce]/60 px-3 py-1 text-[#fffb96] font-bold transition-all shadow-[0_0_10px_rgba(255,113,206,0.3)] flex items-center gap-1.5"
+              title="Click to rebind hotkey"
             >
               <span>KEY:</span>
               <span className="text-[#ff71ce] underline">{config.hotkey}</span>
@@ -182,7 +220,7 @@ export default function App() {
           </div>
         </div>
 
-        {/* Dynamic Multi-Panel Workspace */}
+        {/* View 1: Main Clicker Workspace */}
         {activeView === 'clicker' && (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             {/* Left Column: The Vapor Clicker Control Panel */}
@@ -216,7 +254,7 @@ export default function App() {
           </div>
         )}
 
-        {/* View 2: Dedicated Sandbox & Benchmark Focus */}
+        {/* View 2: Dedicated Sandbox & CPS Benchmark */}
         {activeView === 'sandbox' && (
           <div className="space-y-6">
             <TestingSandbox
@@ -225,7 +263,6 @@ export default function App() {
               onSetCoordinates={handleSetCoordinates}
               onResetStats={resetStats}
             />
-
             <div className="max-w-xl mx-auto">
               <ClickerWindow
                 config={config}
@@ -258,7 +295,6 @@ export default function App() {
               onPlayMacro={startMacro}
               onStopMacro={stopMacro}
             />
-
             <TestingSandbox
               stats={stats}
               isRunning={isMacroRunning || isRunning}
@@ -273,7 +309,7 @@ export default function App() {
       <HotkeyModal
         isOpen={isHotkeyModalOpen}
         currentHotkey={config.hotkey}
-        onSave={(newKey) => handleUpdateConfig({ hotkey: newKey })}
+        onSave={(newKey: string) => handleUpdateConfig({ hotkey: newKey })}
         onClose={() => setIsHotkeyModalOpen(false)}
       />
 
@@ -283,9 +319,14 @@ export default function App() {
         onClose={() => setIsExportModalOpen(false)}
       />
 
+      <PCGuideModal
+        isOpen={isPCGuideOpen}
+        onClose={() => setIsPCGuideOpen(false)}
+      />
+
       {/* Footer */}
       <footer className="relative z-10 py-4 px-6 border-t border-purple-900/60 bg-[#0b0314]/90 text-center text-[11px] font-mono text-slate-500">
-        VAPOR CLICKER // HIGH PERFORMANCE RETRO AUTO CLICKER // PRESS {config.hotkey} TO TOGGLE
+        VAPOR CLICKER PC // HIGH PERFORMANCE RETRO AUTO CLICKER // PRESS [{config.hotkey}] TO TOGGLE
       </footer>
     </div>
   );
