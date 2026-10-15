@@ -14,7 +14,6 @@ import { ScriptExportModal } from './components/ScriptExportModal';
 import { HotkeyModal } from './components/HotkeyModal';
 import { TopNavigation } from './components/TopNavigation';
 import { ClickRipplesLayer } from './components/ClickRipplesLayer';
-import { Sparkles, Terminal, Activity, HelpCircle, Layers } from 'lucide-react';
 
 const STORAGE_KEY = 'vaporclick_config_v1';
 
@@ -213,25 +212,6 @@ export default function App() {
                 onSetCoordinates={handleSetCoordinates}
                 onResetStats={resetStats}
               />
-
-              {/* Quick Info & Tips Bar */}
-              <div className="bg-[#130726]/90 border border-purple-900/60 p-3.5 text-slate-300 font-mono text-xs space-y-1.5">
-                <div className="text-[#01cdfe] font-bold flex items-center gap-1.5">
-                  <HelpCircle className="w-3.5 h-3.5" />
-                  <span>VAPOR CLICKER PRO-TIPS</span>
-                </div>
-                <div className="text-[11px] text-slate-400 space-y-1">
-                  <p>
-                    • Press <strong className="text-white">[{config.hotkey}]</strong> on your keyboard to instantly trigger clicking on/off from anywhere in this window.
-                  </p>
-                  <p>
-                    • Use <strong className="text-white">"Pick Coordinate"</strong> to lock onto specific target buttons or coordinates.
-                  </p>
-                  <p>
-                    • Need to run this on games outside the browser? Click <strong className="text-[#05ffa1]">"Export Scripts"</strong> in the top menu to get AutoHotkey or Python code!
-                  </p>
-                </div>
-              </div>
             </div>
           </div>
         )}

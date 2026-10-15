@@ -1,13 +1,9 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Gauge,
   Activity,
-  Crosshair,
-  Target,
   RefreshCw,
-  Zap,
   Grid,
-  Trophy,
 } from 'lucide-react';
 import { ClickStats } from '../types/clicker';
 
@@ -18,12 +14,11 @@ interface TestingSandboxProps {
   onResetStats: () => void;
 }
 
-type SandboxTab = 'benchmark' | 'statue' | 'arena' | 'pixelpad';
+type SandboxTab = 'benchmark' | 'pixelpad';
 
 export const TestingSandbox: React.FC<TestingSandboxProps> = ({
   stats,
   isRunning,
-  onSetCoordinates,
   onResetStats,
 }) => {
   const [activeTab, setActiveTab] = useState<SandboxTab>('benchmark');
@@ -31,88 +26,13 @@ export const TestingSandbox: React.FC<TestingSandboxProps> = ({
   // Benchmark rolling history
   const [cpsHistory, setCpsHistory] = useState<number[]>(new Array(24).fill(0));
 
-  // Dummy statue state
-  const [statueHits, setStatueHits] = useState(0);
-  const [statueLevel, setStatueLevel] = useState(1);
-  const [isShaking, setIsShaking] = useState(false);
-  const [floatingTexts, setFloatingTexts] = useState<
-    { id: string; text: string; x: number; y: number }[]
-  >([]);
-
-  // Coordinate Arena Targets
-  const [arenaHits, setArenaHits] = useState<{ [key: string]: number }>({
-    targetA: 0,
-    targetB: 0,
-    targetC: 0,
-    targetD: 0,
-  });
-
   // Pixel Pad
   const [gridPixels, setGridPixels] = useState<boolean[]>(new Array(48).fill(false));
-
-  const targetRefs = {
-    targetA: useRef<HTMLDivElement>(null),
-    targetB: useRef<HTMLDivElement>(null),
-    targetC: useRef<HTMLDivElement>(null),
-    targetD: useRef<HTMLDivElement>(null),
-  };
 
   // Update CPS history chart
   useEffect(() => {
     setCpsHistory((prev) => [...prev.slice(1), stats.activeCPS]);
   }, [stats.activeCPS]);
-
-  // Handle click on the Statue Target
-  const handleStatueClick = (e: React.MouseEvent) => {
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const clickY = e.clientY - rect.top;
-
-    setStatueHits((prev) => {
-      const next = prev + 1;
-      if (next % 100 === 0) {
-        setStatueLevel((lvl) => lvl + 1);
-      }
-      return next;
-    });
-
-    setIsShaking(true);
-    setTimeout(() => setIsShaking(false), 80);
-
-    const textId = Math.random().toString();
-    setFloatingTexts((prev) => [
-      ...prev.slice(-8),
-      {
-        id: textId,
-        text: `+1 CLICK`,
-        x: clickX,
-        y: clickY,
-      },
-    ]);
-
-    setTimeout(() => {
-      setFloatingTexts((prev) => prev.filter((item) => item.id !== textId));
-    }, 600);
-  };
-
-  // Lock coordinates of an arena target
-  const lockTargetCoordinates = (key: 'targetA' | 'targetB' | 'targetC' | 'targetD') => {
-    const el = targetRefs[key].current;
-    if (el) {
-      const rect = el.getBoundingClientRect();
-      const centerX = Math.round(rect.left + rect.width / 2);
-      const centerY = Math.round(rect.top + rect.height / 2);
-      onSetCoordinates(centerX, centerY);
-    }
-  };
-
-  // Register hit on an arena target
-  const handleArenaTargetClick = (key: string) => {
-    setArenaHits((prev) => ({
-      ...prev,
-      [key]: (prev[key] || 0) + 1,
-    }));
-  };
 
   // Toggle pixel pad cell
   const handlePixelClick = (index: number) => {
@@ -141,7 +61,7 @@ export const TestingSandbox: React.FC<TestingSandboxProps> = ({
       <div className="flex items-center justify-between px-3 py-1.5 bg-gradient-to-r from-[#01cdfe] via-[#b967ff] to-[#ff71ce] text-black font-extrabold text-xs tracking-wider">
         <div className="flex items-center gap-2">
           <Activity className="w-4 h-4" />
-          <span>VAPOR TEST ARENA // LIVE BENCHMARK & TARGETS</span>
+          <span>VAPOR TEST ARENA // LIVE BENCHMARK</span>
         </div>
         <div className="flex items-center gap-1">
           <span className="text-[10px] bg-black/20 text-black px-1 font-bold">
@@ -162,30 +82,6 @@ export const TestingSandbox: React.FC<TestingSandboxProps> = ({
         >
           <Gauge className="w-3.5 h-3.5" />
           <span>CPS Speedometer</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('statue')}
-          className={`flex-1 py-2 px-3 text-center border-r border-[#01cdfe]/20 font-bold flex items-center justify-center gap-1.5 transition-colors ${
-            activeTab === 'statue'
-              ? 'bg-[#ff71ce] text-black'
-              : 'text-slate-300 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Zap className="w-3.5 h-3.5" />
-          <span>Vapor Dummy</span>
-        </button>
-
-        <button
-          onClick={() => setActiveTab('arena')}
-          className={`flex-1 py-2 px-3 text-center border-r border-[#01cdfe]/20 font-bold flex items-center justify-center gap-1.5 transition-colors ${
-            activeTab === 'arena'
-              ? 'bg-[#05ffa1] text-black'
-              : 'text-slate-300 hover:text-white hover:bg-white/5'
-          }`}
-        >
-          <Target className="w-3.5 h-3.5" />
-          <span>Targets (X,Y)</span>
         </button>
 
         <button
@@ -302,189 +198,7 @@ export const TestingSandbox: React.FC<TestingSandboxProps> = ({
         </div>
       )}
 
-      {/* TAB 2: VAPOR DUMMY STATUE */}
-      {activeTab === 'statue' && (
-        <div className="p-4 space-y-4 font-mono text-xs text-slate-200">
-          <div className="text-center text-[11px] text-slate-400">
-            Target Dummy responds to automatic or manual clicks. Level up every 100 hits!
-          </div>
-
-          {/* Statue Hit Target Box */}
-          <div
-            onClick={handleStatueClick}
-            className={`w-full h-52 bg-[#0c0317] border-2 border-[#ff71ce]/70 relative flex flex-col items-center justify-center cursor-crosshair overflow-hidden group hover:border-[#01cdfe] transition-all ${
-              isShaking ? 'translate-y-0.5 scale-98' : ''
-            }`}
-          >
-            {/* Background Grid Accent */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,#ff71ce10_1px,transparent_1px),linear-gradient(to_bottom,#ff71ce10_1px,transparent_1px)] bg-[size:16px_16px] pointer-events-none" />
-
-            {/* Neon Vapor Bust representation */}
-            <div className="relative z-10 flex flex-col items-center select-none pointer-events-none">
-              <div className="text-6xl drop-shadow-[0_0_15px_rgba(255,113,206,0.6)]">
-                🗿
-              </div>
-              <div className="text-sm font-extrabold text-[#fffb96] mt-2 tracking-wider">
-                HELIOS STATUE [LVL {statueLevel}]
-              </div>
-              <div className="text-[11px] text-[#01cdfe]">
-                HITS TAKEN: {statueHits}
-              </div>
-            </div>
-
-            {/* Floating click indicators */}
-            {floatingTexts.map((f) => (
-              <div
-                key={f.id}
-                className="absolute text-xs font-bold text-[#05ffa1] animate-bounce pointer-events-none drop-shadow-[0_0_5px_rgba(5,255,161,0.8)]"
-                style={{ left: f.x, top: f.y }}
-              >
-                {f.text}
-              </div>
-            ))}
-
-            {/* Target Reticle */}
-            <div className="absolute bottom-2 right-2 text-[10px] text-slate-500">
-              [CLICK TO DAMAGE]
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center text-[11px]">
-            <span className="text-slate-400">
-              Statue Rank:{' '}
-              <span className="text-[#ff71ce] font-bold">
-                {statueLevel < 5
-                  ? 'Marble Apprentice'
-                  : statueLevel < 15
-                  ? 'Aesthetic Master'
-                  : 'Vapor Deity'}
-              </span>
-            </span>
-            <button
-              onClick={() => {
-                setStatueHits(0);
-                setStatueLevel(1);
-              }}
-              className="text-slate-400 hover:text-white underline"
-            >
-              Reset Dummy
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 3: COORDINATE TARGETS (X, Y) */}
-      {activeTab === 'arena' && (
-        <div className="p-4 space-y-3 font-mono text-xs text-slate-200">
-          <div className="text-[11px] text-slate-400">
-            Click "Lock (X,Y)" to instantly transfer target screen coordinates into Vapor Clicker!
-          </div>
-
-          <div className="grid grid-cols-2 gap-3">
-            {/* Target A */}
-            <div
-              ref={targetRefs.targetA}
-              onClick={() => handleArenaTargetClick('targetA')}
-              className="p-3 bg-[#1e0c38] border-2 border-[#01cdfe]/60 hover:border-[#01cdfe] cursor-pointer relative group transition-colors"
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[#01cdfe] font-bold text-xs">TARGET ALPHA</span>
-                <span className="text-slate-400 text-[10px]">
-                  Hits: {arenaHits.targetA || 0}
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-300 py-1">Position: Sector North-West</div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  lockTargetCoordinates('targetA');
-                }}
-                className="mt-2 w-full py-1 bg-[#01cdfe] text-black font-bold text-[10px] uppercase hover:brightness-110 flex items-center justify-center gap-1"
-              >
-                <Crosshair className="w-3 h-3" />
-                Lock (X,Y) to Clicker
-              </button>
-            </div>
-
-            {/* Target B */}
-            <div
-              ref={targetRefs.targetB}
-              onClick={() => handleArenaTargetClick('targetB')}
-              className="p-3 bg-[#1e0c38] border-2 border-[#ff71ce]/60 hover:border-[#ff71ce] cursor-pointer relative group transition-colors"
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[#ff71ce] font-bold text-xs">TARGET BETA</span>
-                <span className="text-slate-400 text-[10px]">
-                  Hits: {arenaHits.targetB || 0}
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-300 py-1">Position: Sector North-East</div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  lockTargetCoordinates('targetB');
-                }}
-                className="mt-2 w-full py-1 bg-[#ff71ce] text-black font-bold text-[10px] uppercase hover:brightness-110 flex items-center justify-center gap-1"
-              >
-                <Crosshair className="w-3 h-3" />
-                Lock (X,Y) to Clicker
-              </button>
-            </div>
-
-            {/* Target C */}
-            <div
-              ref={targetRefs.targetC}
-              onClick={() => handleArenaTargetClick('targetC')}
-              className="p-3 bg-[#1e0c38] border-2 border-[#05ffa1]/60 hover:border-[#05ffa1] cursor-pointer relative group transition-colors"
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[#05ffa1] font-bold text-xs">TARGET GAMMA</span>
-                <span className="text-slate-400 text-[10px]">
-                  Hits: {arenaHits.targetC || 0}
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-300 py-1">Position: Sector South-West</div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  lockTargetCoordinates('targetC');
-                }}
-                className="mt-2 w-full py-1 bg-[#05ffa1] text-black font-bold text-[10px] uppercase hover:brightness-110 flex items-center justify-center gap-1"
-              >
-                <Crosshair className="w-3 h-3" />
-                Lock (X,Y) to Clicker
-              </button>
-            </div>
-
-            {/* Target D */}
-            <div
-              ref={targetRefs.targetD}
-              onClick={() => handleArenaTargetClick('targetD')}
-              className="p-3 bg-[#1e0c38] border-2 border-[#fffb96]/60 hover:border-[#fffb96] cursor-pointer relative group transition-colors"
-            >
-              <div className="flex items-center justify-between mb-1.5">
-                <span className="text-[#fffb96] font-bold text-xs">TARGET DELTA</span>
-                <span className="text-slate-400 text-[10px]">
-                  Hits: {arenaHits.targetD || 0}
-                </span>
-              </div>
-              <div className="text-[10px] text-slate-300 py-1">Position: Sector South-East</div>
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  lockTargetCoordinates('targetD');
-                }}
-                className="mt-2 w-full py-1 bg-[#fffb96] text-black font-bold text-[10px] uppercase hover:brightness-110 flex items-center justify-center gap-1"
-              >
-                <Crosshair className="w-3 h-3" />
-                Lock (X,Y) to Clicker
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* TAB 4: PIXEL PAD */}
+      {/* TAB 2: PIXEL PAD */}
       {activeTab === 'pixelpad' && (
         <div className="p-4 space-y-3 font-mono text-xs text-slate-200">
           <div className="flex items-center justify-between text-[11px]">

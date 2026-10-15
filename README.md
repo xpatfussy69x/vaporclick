@@ -36,8 +36,7 @@ An authentic 90s Vaporwave-styled auto-clicking utility and performance benchmar
 
 - **CPS Benchmark & Sandbox**:
   - Live speedometer gauge with peak CPS and rolling telemetry graph.
-  - Click-reactive Vapor Dummy statue with combos and level progression.
-  - Fixed coordinate targets (Alpha, Beta, Gamma, Delta) with 1-click coordinate lock.
+  - Rating tier evaluations (Casual, Pro Gamer, Turbo, Overclock, Lightspeed Max).
   - Interactive pixel canvas pad.
 
 - **Desktop Script Exporters**:
