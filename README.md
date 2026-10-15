@@ -2,7 +2,7 @@
 
 An authentic 90s Vaporwave-styled auto-clicking utility and performance benchmark application.
 
-![Vapor Clicker Screenshot](src/assets/images/vapor_clicker_screenshot_1792026866385.jpg)
+![Vapor Clicker Screenshot](src/assets/images/app_screenshot.png)
 
 ## Features
 
@@ -48,7 +48,17 @@ An authentic 90s Vaporwave-styled auto-clicking utility and performance benchmar
 
 ## Getting Started
 
+### Windows Download (.exe)
+1. Go to the **[Latest GitHub Release](https://github.com/xpatfussy69x/vaporclick/releases/tag/v1.0.0)**.
+2. Download **`VaporClicker-Setup.exe`**.
+3. Double-click **`VaporClicker-Setup.exe`** to install and immediately run Vapor Clicker on your PC (this bundles all necessary dependencies and DLLs automatically).
+
+### Web / Development Setup
 ```bash
+# Clone the repository
+git clone https://github.com/xpatfussy69x/vaporclick.git
+cd vaporclick
+
 # Install dependencies
 npm install
 

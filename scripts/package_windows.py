@@ -2,7 +2,7 @@ import urllib.request
 import zipfile
 import shutil
 import os
-import sys
+import subprocess
 
 def build():
     print("[1/5] Building web distribution...")
@@ -41,21 +41,26 @@ def build():
     with open(os.path.join(app_dir, "package.json"), "w") as f:
         f.write('{"name": "vapor-clicker", "version": "1.0.0", "main": "electron/main.cjs"}')
 
-    # Rename electron.exe -> VaporClicker.exe
+    # Rename electron.exe -> VaporClicker.exe inside build_win
     src_exe = os.path.join(build_dir, "electron.exe")
     dst_exe = os.path.join(build_dir, "VaporClicker.exe")
     if os.path.exists(src_exe):
         os.rename(src_exe, dst_exe)
 
-    # Copy VaporClicker.exe to root for direct standalone download
-    shutil.copy(dst_exe, "VaporClicker.exe")
+    print("[5/5] Compiling NSIS single-file installer (VaporClicker-Setup.exe)...")
+    res = subprocess.run(["makensis", "scripts/installer.nsi"], capture_output=True, text=True)
+    if res.returncode != 0:
+        print("NSIS Error:", res.stderr)
+        raise RuntimeError("makensis failed")
+    
+    print("NSIS output:", res.stdout[-300:])
 
-    print("[5/5] Creating VaporClicker-v1.0.0-Windows.zip portable package...")
-    shutil.make_archive("VaporClicker-v1.0.0-Windows", 'zip', build_dir)
+    # Also build portable zip
+    shutil.make_archive("VaporClicker-Portable", 'zip', build_dir)
 
-    print("Success! Created:")
-    print(" - VaporClicker.exe")
-    print(" - VaporClicker-v1.0.0-Windows.zip")
+    print("SUCCESS! Created:")
+    print(" - VaporClicker-Setup.exe (Single-file Windows Installer)")
+    print(" - VaporClicker-Portable.zip (Portable Standalone ZIP)")
 
 if __name__ == "__main__":
     build()
