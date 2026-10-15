@@ -1,6 +1,6 @@
 # Vapor Clicker
 
-An authentic 90s Vaporwave-styled auto-clicking utility and performance benchmark application.
+A Vaporwave-styled auto-clicking utility and performance benchmark application.
 
 ![Vapor Clicker Screenshot](src/assets/images/app_screenshot.png)
 
